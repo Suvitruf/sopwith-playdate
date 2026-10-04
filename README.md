@@ -1,3 +1,5 @@
+![Sopwith launcher animation](https://projects.cdn.aapanasik.com/sopwith/sopwith-launcher-350x155.gif)
+
 # Sopwith for Playdate
 
 A native C port of [SDL Sopwith](https://github.com/fragglet/sdl-sopwith): take off, dogfight, bomb targets, and land on Playdate's monochrome screen.
