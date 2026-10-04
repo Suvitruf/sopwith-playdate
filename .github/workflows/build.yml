@@ -1,0 +1,52 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate scripts
+        run: |
+          bash -n tools/*.sh
+          python3 -m py_compile tools/bootstrap.py tools/check-reference.py
+          python3 tools/build-launcher.py --check
+          git diff --check
+      - name: SDK-independent sanitizer tests
+        run: bash tools/test.sh
+
+  sdk-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Desktop reference prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libsdl2-dev
+      - name: Acquire checksum-pinned external tools
+        run: python3 tools/bootstrap.py --device-compatibility-sdk --local-toolchain --fetch-upstream
+      - name: Build both game targets
+        run: PLAYDATE_SDK_PATH="$PWD/.tools/PlaydateSDK-2.2.0" bash tools/build-game.sh
+      - name: All sanitizer tests including application and SDK file adapter
+        run: bash tools/test.sh
+      - name: Compare the unmodified desktop engine
+        run: |
+          bash tools/build-reference.sh
+          python3 tools/check-reference.py
+      # SDKs and linked game binaries are intentionally not published as artifacts.

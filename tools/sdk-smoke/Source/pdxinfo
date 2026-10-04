@@ -1,0 +1,6 @@
+name=Sopwith SDK Check
+author=Sopwith port contributors
+description=Development environment verification; not the game.
+bundleID=dev.sopwith.sdkcheck
+version=0.1.2
+buildNumber=3

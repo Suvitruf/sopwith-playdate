@@ -1,0 +1,180 @@
+{
+  "verified_on": "2026-10-04",
+  "sdk": {
+    "version": "3.1.2",
+    "filename": "PlaydateSDK-3.1.2.tar.gz",
+    "url": "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-3.1.2.tar.gz",
+    "sha256": "7e3d912611e82f79007afd2a3a9e68a19c8bfc7025b5f761805f21368470d793"
+  },
+  "device_compatibility_sdk": {
+    "version": "2.2.0",
+    "filename": "PlaydateSDK-2.2.0.tar.gz",
+    "url": "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-2.2.0.tar.gz",
+    "sha256": "795e29620289bdad051e785af5f6dc29e2e00792f53883114284f96b3971d9b0"
+  },
+  "windows_usb_sdk": {
+    "version": "3.1.2",
+    "filename": "PlaydateSDK-3.1.2-Windows.exe",
+    "url": "https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-3.1.2.exe",
+    "sha256": "bc3d49a2c6072b41c6c4500850887735d96636bd7b97d69116af84598b94a96f"
+  },
+  "upstream": {
+    "revision": "c4e034109e28a5bd1727645fe77b27430219e8b5",
+    "filename": "sdl-sopwith-c4e0341.tar.gz",
+    "url": "https://codeload.github.com/fragglet/sdl-sopwith/tar.gz/c4e034109e28a5bd1727645fe77b27430219e8b5",
+    "sha256": "f69abcdb33762a020ebd18740945992d8dd0db36e3248c775e0d87d0efa7176e"
+  },
+  "arm_toolchain": [
+    {
+      "package": "binutils-arm-none-eabi",
+      "version": "2.42-1ubuntu1+23",
+      "filename": "binutils-arm-none-eabi_2.42-1ubuntu1+23_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/universe/b/binutils-arm-none-eabi/binutils-arm-none-eabi_2.42-1ubuntu1+23_amd64.deb",
+      "sha256": "2aab2d6a7e4c21ce33462f8b52b972e2a8e4597e79b5add5502e2d1f3e543472"
+    },
+    {
+      "package": "gcc-arm-none-eabi",
+      "version": "15:13.2.rel1-2",
+      "filename": "gcc-arm-none-eabi_15%3a13.2.rel1-2_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/universe/g/gcc-arm-none-eabi/gcc-arm-none-eabi_13.2.rel1-2_amd64.deb",
+      "sha256": "519a5d0e5292a4b4861f69ae96e8918149bfd1646072ca53451ccfb8c5a91948"
+    },
+    {
+      "package": "libnewlib-arm-none-eabi",
+      "version": "4.4.0.20231231-2",
+      "filename": "libnewlib-arm-none-eabi_4.4.0.20231231-2_all.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/universe/n/newlib/libnewlib-arm-none-eabi_4.4.0.20231231-2_all.deb",
+      "sha256": "9af508599193d07c9460897d01a36af46a2707765bd6941e27c6d0747859b0eb"
+    },
+    {
+      "package": "libnewlib-dev",
+      "version": "4.4.0.20231231-2",
+      "filename": "libnewlib-dev_4.4.0.20231231-2_all.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/universe/n/newlib/libnewlib-dev_4.4.0.20231231-2_all.deb",
+      "sha256": "f945b12c3abc844e76eebc28cf7d99e9aefd7caec39583116ef29556b3c52414"
+    }
+  ],
+  "simulator_libraries": [
+    {
+      "package": "libenchant-2-2",
+      "version": "2.3.3-2build2",
+      "filename": "libenchant-2-2_2.3.3-2build2_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/e/enchant-2/libenchant-2-2_2.3.3-2build2_amd64.deb",
+      "sha256": "4faecb5cee57ff00649b3ea4d83c072d9da2670797b7d2854708ff60cef17426"
+    },
+    {
+      "package": "libevdev2",
+      "version": "1.13.1+dfsg-1build1",
+      "filename": "libevdev2_1.13.1+dfsg-1build1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libe/libevdev/libevdev2_1.13.1+dfsg-1build1_amd64.deb",
+      "sha256": "a14b1ea7b3220a063458590734920879cec8431b4fc5160eb0f044dfb8d76515"
+    },
+    {
+      "package": "libgstreamer-gl1.0-0",
+      "version": "1.24.2-1ubuntu0.5",
+      "filename": "libgstreamer-gl1.0-0_1.24.2-1ubuntu0.5_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base1.0/libgstreamer-gl1.0-0_1.24.2-1ubuntu0.5_amd64.deb",
+      "sha256": "fb87a72e431d2c57c35b0b2bd4189bb6a6e771788c3ba389a9e3623886486b22"
+    },
+    {
+      "package": "libgstreamer-plugins-base1.0-0",
+      "version": "1.24.2-1ubuntu0.5",
+      "filename": "libgstreamer-plugins-base1.0-0_1.24.2-1ubuntu0.5_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/g/gst-plugins-base1.0/libgstreamer-plugins-base1.0-0_1.24.2-1ubuntu0.5_amd64.deb",
+      "sha256": "3c5826eee14cb5077c7e53707fbe86cc0882c787ffe79b330cad636c0009473d"
+    },
+    {
+      "package": "libgudev-1.0-0",
+      "version": "1:238-5ubuntu1",
+      "filename": "libgudev-1.0-0_1%3a238-5ubuntu1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libg/libgudev/libgudev-1.0-0_238-5ubuntu1_amd64.deb",
+      "sha256": "8bdd42c584a8d18759df2311b126dc679d438e9780038743b792cf5315f248dc"
+    },
+    {
+      "package": "libharfbuzz-icu0",
+      "version": "8.3.0-2build2",
+      "filename": "libharfbuzz-icu0_8.3.0-2build2_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/h/harfbuzz/libharfbuzz-icu0_8.3.0-2build2_amd64.deb",
+      "sha256": "9098670758e60b190d7edf367ad57e954bfc1b2a616def3f4e281062e036a843"
+    },
+    {
+      "package": "libhyphen0",
+      "version": "2.8.8-7build3",
+      "filename": "libhyphen0_2.8.8-7build3_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/h/hyphen/libhyphen0_2.8.8-7build3_amd64.deb",
+      "sha256": "b508d3a5da168ddb2ae6e79ea0521ba64cd121285db0ece438d0bd56ba628556"
+    },
+    {
+      "package": "libjavascriptcoregtk-4.1-0",
+      "version": "2.52.6-0ubuntu0.24.04.1",
+      "filename": "libjavascriptcoregtk-4.1-0_2.52.6-0ubuntu0.24.04.1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/w/webkit2gtk/libjavascriptcoregtk-4.1-0_2.52.6-0ubuntu0.24.04.1_amd64.deb",
+      "sha256": "81ab415373b601a1379710c87dfbee82536805218920f66aa102fa3c9bdc2da2"
+    },
+    {
+      "package": "libmanette-0.2-0",
+      "version": "0.2.7-1build2",
+      "filename": "libmanette-0.2-0_0.2.7-1build2_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libm/libmanette/libmanette-0.2-0_0.2.7-1build2_amd64.deb",
+      "sha256": "8fbb67e94abf563c01398ad7458df1a6824f19a0b4337f67d61c0889771805db"
+    },
+    {
+      "package": "liborc-0.4-0t64",
+      "version": "1:0.4.38-1ubuntu0.1",
+      "filename": "liborc-0.4-0t64_1%3a0.4.38-1ubuntu0.1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/o/orc/liborc-0.4-0t64_0.4.38-1ubuntu0.1_amd64.deb",
+      "sha256": "a546ca6e237748693596ba469e84a2e0581bc39113abc62b718931df00a4c682"
+    },
+    {
+      "package": "libsecret-1-0",
+      "version": "0.21.4-1build3",
+      "filename": "libsecret-1-0_0.21.4-1build3_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libs/libsecret/libsecret-1-0_0.21.4-1build3_amd64.deb",
+      "sha256": "7d7263ffc92c33042328f99c93433a846e8d9e549876dab18ba18606e6541ecd"
+    },
+    {
+      "package": "libsecret-common",
+      "version": "0.21.4-1build3",
+      "filename": "libsecret-common_0.21.4-1build3_all.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libs/libsecret/libsecret-common_0.21.4-1build3_all.deb",
+      "sha256": "41866e9026e451fd25a4cbe887fa56c43219f9f3eda88d1831452ba6d6b8bb5b"
+    },
+    {
+      "package": "libsoup-3.0-0",
+      "version": "3.4.4-5ubuntu0.8",
+      "filename": "libsoup-3.0-0_3.4.4-5ubuntu0.8_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libs/libsoup3/libsoup-3.0-0_3.4.4-5ubuntu0.8_amd64.deb",
+      "sha256": "2e1c12d3264f7960f948a5d1b1ed924f588cfa35241d7af38d13a5a92fb10f3b"
+    },
+    {
+      "package": "libsoup-3.0-common",
+      "version": "3.4.4-5ubuntu0.8",
+      "filename": "libsoup-3.0-common_3.4.4-5ubuntu0.8_all.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/libs/libsoup3/libsoup-3.0-common_3.4.4-5ubuntu0.8_all.deb",
+      "sha256": "175a3d508eb94e2d676d4f68fb67961a4600426598ce6ee1838c8207e1d947c4"
+    },
+    {
+      "package": "libwayland-server0",
+      "version": "1.22.0-2.1build1",
+      "filename": "libwayland-server0_1.22.0-2.1build1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/w/wayland/libwayland-server0_1.22.0-2.1build1_amd64.deb",
+      "sha256": "edbfa4b6857691ae922cc768a753fab230eee9e956aa2ce4f2eaa8d9ad777dca"
+    },
+    {
+      "package": "libwebkit2gtk-4.1-0",
+      "version": "2.52.6-0ubuntu0.24.04.1",
+      "filename": "libwebkit2gtk-4.1-0_2.52.6-0ubuntu0.24.04.1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/main/w/webkit2gtk/libwebkit2gtk-4.1-0_2.52.6-0ubuntu0.24.04.1_amd64.deb",
+      "sha256": "3b3f7e2c36c679fd60392f6526b8c5659d6c5db324ebe792003831dc8108ac03"
+    }
+  ],
+  "desktop_libraries": [
+    {
+      "package": "libsdl2-dev",
+      "version": "2.30.0+dfsg-1ubuntu3.1",
+      "filename": "libsdl2-dev_2.30.0+dfsg-1ubuntu3.1_amd64.deb",
+      "url": "https://archive.ubuntu.com/ubuntu/pool/universe/libs/libsdl2/libsdl2-dev_2.30.0+dfsg-1ubuntu3.1_amd64.deb",
+      "sha256": "8d78c93699aafdb33205ef7712baeefc8d8aa806862fac4c2554f3f8db234da1"
+    }
+  ]
+}

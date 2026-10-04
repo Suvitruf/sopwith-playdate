@@ -1,0 +1,2 @@
+# Preserve upstream license text, including its original Markdown line endings.
+COPYING.md whitespace=-blank-at-eol

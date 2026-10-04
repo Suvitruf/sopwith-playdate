@@ -1,0 +1,73 @@
+SOPWITH FOR PLAYDATE - REVIEWER INSTRUCTIONS
+Version: 0.4.0 (build 9)
+Bundle ID: com.apanasik.sopwith
+
+GETTING STARTED
+
+The sopwith.pdx folder at the root of this ZIP is the native Playdate game. It was built with SDK 2.2.0, targeting Playdate OS 2.2.0. Build 9 adds animated Home screen artwork and has been installed on a console for visual review. Full gameplay acceptance remains pending. Review this bundle on a console; native Windows/macOS Simulator libraries are not included.
+
+Select Sopwith on Home without launching it to see the plane loop above the buildings beside the game name. List view has a small animated plane icon.
+
+From the title screen:
+  A: Dogfight, with computer opponents.
+  B: Practice, an easier introduction with unlimited gun ammunition and bombs.
+  Down: Options, including Settings, Mission scores, Controls and Credits.
+
+For a quick first flight, select Practice with B. Hold Right to increase throttle, then tap Up to take off. Pitch is relative to the plane, so small taps are easier to learn than holding the direction continuously.
+
+FLIGHT CONTROLS
+
+  Up / Down:       Pitch relative to the plane.
+  Right / Left:    Increase / decrease throttle.
+  Hold A:          Fire the gun.
+  Tap/release B:   Drop one bomb on release.
+  Hold B, then tap Left:   Flip the plane once.
+  Hold B, then tap Right:  Engage the automatic return-home/landing routine.
+  Undocked crank: Optional throttle adjustment, 30 degrees per step.
+  Menu:           Pause and open the system menu.
+
+Release B before starting another flip or return-home gesture. To flip back, release B, then hold B and tap Left again. Release a held Left/Right before starting a B chord. Releasing B after a completed chord does not drop a bomb. All essential controls work with the crank docked.
+
+The player has a small V marker; friends have an open square; enemies an X. Settings can disable faction markers, invert pitch, disable crank throttle, mute sound, or change volume. B or Back leaves Settings and saves changes.
+
+OBJECTIVE AND PROGRESSION
+
+Destroy the opposing faction's ground targets while avoiding aircraft, terrain and hostile fire. Guns and bombs can damage enemy targets. Return home to land and replenish supplies during Dogfight.
+
+On the results screen:
+  A after a win: Advance to the next mission.
+  A after a loss: Start again.
+  B: Return to the title.
+
+There is no level selector, level-skip shortcut, invulnerability toggle or review-only cheat in this build. Practice provides the easiest way to inspect flight, weapons, the landscape and return-home behavior. Later missions are reached through normal victories. Menu > Restart starts a new campaign in the selected mode. Options > Return to title asks before abandoning a flight.
+
+MENUS AND SCORES
+
+Menu contains Restart, Sound and Options. Options pauses the mission. Up/Down selects menu items, A confirms, and B goes back. Release held flight controls after leaving a menu before pressing them again.
+
+Options > Mission scores:
+  Left / Right: Switch Dogfight / Practice.
+  Up / Down:    Switch All-time / Daily.
+  A or B:       Return.
+
+Scores are local to the device, under the pilot label YOU. Each mode/period keeps the five best positive finished-mission scores. Daily uses the GMT day when a mission ends and resets its displayed list at midnight GMT. It is a daily score list, not a separate seeded daily challenge. Online Catalog leaderboards are not connected in this build.
+
+Settings and scores persist across launches. An unfinished mission cannot be saved and resumed. Build 7 includes a compatibility fix for repeated saves on older firmware; "Retry save" is shown only if a write fails.
+
+Build 8 uses a new bundle ID and save directory. Settings and scores from earlier development builds are not automatically imported.
+
+PACKAGE CONTENTS AND ATTRIBUTION
+
+  sopwith.pdx/           Native Playdate game (0.4.0, build 9), with launcher art.
+  README_REVIEW.txt      These instructions.
+  COPYING.md            Upstream GPL license text.
+  AUTHORS.txt           Upstream author credits.
+  LICENSES/             Additional component license text.
+  SOURCE_CODE.txt        Public source repository link and revision information.
+  PACKAGE_MANIFEST.sha256  Checksums of the packaged files.
+
+The port is based on SDL Sopwith by its credited contributors: https://github.com/fragglet/sdl-sopwith
+
+The port's source repository is public: https://github.com/Suvitruf/sopwith-playdate
+
+SOURCE_CODE.txt includes the repository URL and states whether an exact source revision was verified when packaging. In the repository, Documents/SETUP.md contains build instructions, and tools/dependencies.json pins SDK/toolchain versions and downloads. The proprietary SDK itself is an external dependency. Sources/core/PORTING.md records the upstream revision and changes.

@@ -1,0 +1,14 @@
+# Local tools, proprietary SDK, research checkouts, and generated artifacts.
+/.tools/
+/.cache/
+/build/
+*.pdx/
+pdex.bin
+pdex.elf
+pdex.so
+pdex.dylib
+pdex.dll
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
