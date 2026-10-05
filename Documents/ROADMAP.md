@@ -1,6 +1,6 @@
 # Sopwith port roadmap
 
-Current version: **0.4.1 build 12**, bundle ID `com.apanasik.sopwith`. Build 12 updates version metadata without changing build 11 gameplay. The native game, animated launcher artwork and margin resource HUD are implemented. Physical-device checks confirm launcher playback, Practice HUD readability, menu pause/resume, loss/retry and twelve repeated saves/reloads in a separate test profile. Full mission, positive-score persistence and worst-case performance acceptance remain open. See [TESTING.md](TESTING.md) for current verification and the acceptance matrix.
+Current version: **0.4.1 build 13**, bundle ID `com.apanasik.sopwith`. Build 13 adds a native pause panel with read-only resource values and control reminders; original gameplay is preserved. Device captures verify title, both flight modes, settings and a B-release/resume check. The native game, animated launcher artwork and margin resource HUD are implemented. Physical-device checks confirm launcher playback, Practice HUD readability, menu pause/resume, loss/retry and twelve repeated saves/reloads in a separate test profile. Full mission, positive-score persistence and worst-case performance acceptance remain open. See [TESTING.md](TESTING.md) for current verification and the acceptance matrix.
 
 ## Target experience
 
@@ -18,6 +18,8 @@ The first release focuses on built-in offline missions. Network multiplayer, cus
 - [x] Implement versioned two-slot profiles and the repeated-save workaround for older firmware, with fault-injection tests.
 - [x] Add animated launcher card/icon artwork and a loading image, with reproducible [artwork generation](LAUNCHER_ART.md).
 - [x] Add fuel, remaining-aircraft and weapon readouts in the screen margins, preserving the original game view and simulation. Build 11 uses a single lives number; Practice retains unlimited weapons.
+
+- [x] Add a native pause panel with screen-specific resource/control reminders and no extra system menu item.
 
 These features are implemented; their remaining hardware checks are listed below. Build success alone does not complete gameplay acceptance.
 

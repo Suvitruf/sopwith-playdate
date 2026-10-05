@@ -41,6 +41,7 @@ void Speaker_Off(void) {}
 void Speaker_Output(unsigned short count) { (void)count; }
 bool snd_tinnyfilter;
 void test_hud(void);
+void test_pause_panel(void);
 
 static void test_clock(void)
 {
@@ -306,6 +307,7 @@ int main(int argc, char **argv)
     test_input();
     test_pixels();
     test_hud();
+    test_pause_panel();
     assert(trace(33, false) == trace(17, false));
     assert(trace(100, false) == trace(250, false));
     test_lifetime_and_results();

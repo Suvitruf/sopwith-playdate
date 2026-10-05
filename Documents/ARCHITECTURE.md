@@ -13,6 +13,7 @@ The 0.4 prototype is implemented in native C11 using Playdate SDK 2.2.0 APIs. It
 | `Sources/port/tone.c` | Bounded square-wave synthesis with volume ramping. |
 | `Sources/port/markers.c` | Clipped player/faction marker overlay; never changes indexed sprites or collision data. |
 | `Sources/port/hud.c` | Resource readouts in the side/bottom margins, using a copied resource summary and the upstream font; no engine mutations or allocations. |
+| `Sources/port/pause_panel.c` | Read-only screen/resource snapshot and control hints for the native system-menu image. |
 | `Sources/playdate/storage.c` | SDK file-service adapter with checked open/read/write/flush/close/rename operations. |
 | `Sources/port/services.h` | Allocator, fatal error and monotonic time boundary. |
 | `Sources/playdate/main.c` | SDK entry point, display callback, screens, system menu, audio source, lifecycle and service implementation. |
@@ -46,6 +47,8 @@ The core retains all four color indices, its 320-byte pitch, XOR behavior, coord
 After conversion and faction markers, the app passes current fuel, gun rounds, bombs, remaining aircraft and Practice's unlimited-weapons flag to `Port_DrawHUD`. It clears and draws only the side and bottom margins, preserving the indexed source, central image, top strip and row padding. It uses bounded integers and the existing 8×8 font, scaling weapon counts and the aircraft count to 16 pixels high. The fuel gauge has steady low/empty labels; no effect blinks. The original HUD remains visible. The app's existing top-strip mode/throttle drawing follows this overlay.
 
 Index 0 is white. Nonzero pixels are black except checkerboard holes inside connected index-2 areas; thin edges and isolated pixels remain visible. Index-3 bullets remain solid. The top margin shows mode/throttle. `Vid_Update` snapshots up to 100 visible living aircraft, standing targets, and flying balloons before collision handling, matching the just-drawn frame. The final frame receives a player chevron, friendly open square, or enemy X, each 5×5 with a one-pixel white surround. Markers outside the viewport are omitted; surplus markers are dropped. Settings can disable faction markers while keeping the player indicator. The minimap retains its original monochrome conversion; it has no new semantic markers. Crowding and motion readability still need device playtesting. No display operation modifies collision data.
+
+The native pause image is a separate 400×240 SDK bitmap allocated once at initialization. On `kEventPause`, the app copies the current screen and resource values into `PortPausePanel`, draws with the row stride returned by `getBitmapData`, and calls `setMenuImage` with offset zero. Content stays within the left 192 pixels beside the system menu. The bitmap remains alive through resume animations and is detached before being freed at termination. Allocation failure leaves the default system-menu image available. `Port_DrawPausePanel` uses the existing font and never steps the engine, redraws its indexed frame or alters the game framebuffer.
 
 ## Audio
 

@@ -7,6 +7,7 @@
 #include "storage.h"
 #include "tone.h"
 #include "hud.h"
+#include "pause_panel.h"
 #include "swmain.h"
 #include "swsound.h"
 #include "pcsound.h"
@@ -25,6 +26,7 @@ static unsigned selection, help_page, score_mode;
 static bool score_daily;
 static playmode_t selected_mode = PLAYMODE_COMPUTER;
 static PDMenuItem *sound_item;
+static LCDBitmap *pause_image;
 static bool suspended, restart_requested, options_requested;
 static uint32_t report_ms, report_frames, report_ticks, max_update_ms;
 static SoundSource *speaker;
@@ -159,6 +161,36 @@ static void number_at(int number, int x, int y)
     Port_IntText(value, sizeof(value), number);
     text_at(value, x, y);
 }
+static PortHUD flight_resources(void)
+{
+    return (PortHUD){consoleplayer->ob_life, consoleplayer->ob_rounds,
+        consoleplayer->ob_bombs, maxcrash - consoleplayer->ob_crashcnt,
+        selected_mode == PLAYMODE_NOVICE};
+}
+static void prepare_pause_image(void)
+{
+    if (!pause_image) return;
+    PortPausePanel panel = {.view = PORT_PAUSE_MENU};
+    static const char *titles[] = {"TITLE", "FLIGHT", "RESULTS", "OPTIONS",
+        "SETTINGS", "CONTROLS", "MISSION SCORES", "CREDITS", "LEAVE FLIGHT?"};
+    panel.menu_title = titles[screen];
+    if (screen == TITLE) panel.view = PORT_PAUSE_TITLE;
+    else if (screen == FLIGHT || screen == RESULTS) {
+        panel.view = screen == FLIGHT ? PORT_PAUSE_FLIGHT : PORT_PAUSE_RESULTS;
+        panel.resources = flight_resources();
+        panel.score = consoleplayer->ob_score.score;
+        panel.won = consoleplayer->ob_endsts == WINNER;
+    }
+    int width, height, rowbytes;
+    uint8_t *data;
+    pd->graphics->getBitmapData(pause_image, &width, &height, &rowbytes, NULL, &data);
+    if (!data || width != 400 || height != 240 || rowbytes < 50) {
+        pd->system->setMenuImage(NULL, 0);
+        return;
+    }
+    Port_DrawPausePanel(data, rowbytes, &panel);
+    pd->system->setMenuImage(pause_image, 0);
+}
 static void row(const char *text, unsigned index, int y)
 {
     text_at(selection == index ? ">" : " ", 20, y);
@@ -178,9 +210,7 @@ static void draw_screen(void)
         size_t count;
         const PortMarker *markers = Engine_Markers(&count);
         Port_DrawMarkers(frame, markers, count, store.profile.markers);
-        const PortHUD hud = {consoleplayer->ob_life, consoleplayer->ob_rounds,
-            consoleplayer->ob_bombs, maxcrash - consoleplayer->ob_crashcnt,
-            selected_mode == PLAYMODE_NOVICE};
+        const PortHUD hud = flight_resources();
         Port_DrawHUD(frame, &hud);
         pd->graphics->markUpdatedRows(0, 239);
         text_at(selected_mode == PLAYMODE_NOVICE ? "SOPWITH  Practice" : "SOPWITH  Dogfight", 40, 0);
@@ -422,6 +452,8 @@ int eventHandler(PlaydateAPI *api, PDSystemEvent event, uint32_t arg)
         apply_settings();
         Engine_Init();
         Speaker_Init();
+        pause_image = pd->graphics->newBitmap(400, 240, kColorWhite);
+        if (!pause_image) pd->system->logToConsole("SOPWITH pause panel unavailable; using default menu image");
         pd->display->setRefreshRate(30);
         pd->system->setCrankSoundsDisabled(1);
         pd->system->addMenuItem("Restart", menu_restart, NULL);
@@ -429,11 +461,12 @@ int eventHandler(PlaydateAPI *api, PDSystemEvent event, uint32_t arg)
         pd->system->addMenuItem("Options", menu_options, NULL);
         reset_input_clock();
         pd->system->setUpdateCallback(update, NULL);
-        pd->system->logToConsole("SOPWITH 0.4.1 build 12 initialized; save_status=%d generation=%lu", store.status, (unsigned long)store.generation);
+        pd->system->logToConsole("SOPWITH 0.4.1 build 13 initialized; save_status=%d generation=%lu", store.status, (unsigned long)store.generation);
     } else if (event == kEventPause || event == kEventLock) {
         suspended = true;
         reset_input_clock();
         save_profile();
+        if (event == kEventPause) prepare_pause_image();
         pd->system->logToConsole("SOPWITH suspended event=%d", event);
     } else if (event == kEventResume || event == kEventUnlock) {
         suspended = false;
@@ -446,6 +479,8 @@ int eventHandler(PlaydateAPI *api, PDSystemEvent event, uint32_t arg)
         Engine_Shutdown();
         pd->system->removeAllMenuItems();
         sound_item = NULL;
+        pd->system->setMenuImage(NULL, 0);
+        if (pause_image) { pd->graphics->freeBitmap(pause_image); pause_image = NULL; }
         pd->system->logToConsole("SOPWITH shutdown heap=%lu allocs=%lu", (unsigned long)heap_bytes, (unsigned long)heap_allocations);
     }
     return 0;

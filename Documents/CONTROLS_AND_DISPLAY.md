@@ -49,6 +49,12 @@ Use Up/Down to choose an option, A to select, and B to return. Settings supports
 
 Return to title asks for confirmation when leaving a running mission. An unfinished mission is not saved or resumable. Restart in the system menu immediately starts a new campaign in the selected mode.
 
+## Native pause panel
+
+Build 13 adds a panel beside the standard system menu. During flight it shows the mode, score, fuel percentage, remaining aircraft, ammunition and bombs, plus the fire/bomb/flip/return-home controls. Practice explicitly says `UNLIMITED` for weapons. Values are a snapshot taken when Menu opens; closing the menu resumes the same mission.
+
+At title, the panel shows mode selection and flight controls. At results, it shows the final score and next mission/retry controls. In other screens it identifies the current screen and points to Controls and Settings. The existing Restart, Sound and Options menu items remain available. Pending button gestures and elapsed pause time are discarded on resume, following the existing input contract.
+
 ## Current display implementation
 
 The full 320×200 frame remains at (40,20) on the 400×240 display, including its original HUD and minimap. Build 10 adds duplicate resource readouts in the 40-pixel side margins and 20-pixel bottom margin. Mode and throttle remain in the top strip. No camera, sprite, collision or world-coordinate changes are involved.

@@ -2,6 +2,7 @@
 // Exercise the actual application and SDK file adapter against a small fake SDK.
 #include "pd_api.h"
 #include "profile.h"
+#include "pause_panel.h"
 #include "swmain.h"
 #include "swinit.h"
 #include "swend.h"
@@ -26,6 +27,10 @@ static AudioSourceFunction *audio_callback;
 static size_t allocations;
 static char drawn[4096];
 static uint8_t frame[52 * 240];
+struct LCDBitmap { uint8_t data[56 * 240]; };
+static LCDBitmap *menu_image;
+static unsigned bitmap_creations;
+static bool bitmap_failure;
 static bool menu_silent;
 static unsigned flushes, closes;
 static int failure;
@@ -130,6 +135,35 @@ static PDMenuItem *add_check(const char *name, int value, PDMenuItemCallbackFunc
 static void remove_menus(void) { num_menu = 0; }
 static int get_menu(PDMenuItem *item) { return ((Menu *)item)->value; }
 static void set_menu(PDMenuItem *item, int value) { ((Menu *)item)->value = value; }
+static LCDBitmap *new_bitmap(int width, int height, LCDColor color)
+{
+    assert(width == 400 && height == 240 && color == kColorWhite);
+    ++bitmap_creations;
+    if (bitmap_failure) return NULL;
+    LCDBitmap *bitmap = allocate(NULL, sizeof(*bitmap));
+    memset(bitmap, 0xff, sizeof(*bitmap));
+    return bitmap;
+}
+static void free_bitmap(LCDBitmap *bitmap)
+{
+    assert(bitmap && bitmap != menu_image); // detach before releasing the SDK image
+    allocate(bitmap, 0);
+}
+static void bitmap_data(LCDBitmap *bitmap, int *width, int *height, int *rowbytes,
+                        uint8_t **mask, uint8_t **data)
+{
+    assert(bitmap);
+    if (width) *width = 400;
+    if (height) *height = 240;
+    if (rowbytes) *rowbytes = 56; // exercise a pitch different from the screen buffer
+    if (mask) *mask = NULL;
+    if (data) *data = bitmap->data;
+}
+static void set_menu_image(LCDBitmap *bitmap, int offset)
+{
+    assert(offset == 0);
+    menu_image = bitmap;
+}
 static void refresh(float rate) { assert(rate == 30); }
 static void clear(LCDColor color) { memset(frame, color == kColorWhite ? 0xff : 0, sizeof(frame)); }
 static void rect(int x, int y, int w, int h, LCDColor color) { (void)x;(void)y;(void)w;(void)h;(void)color; }
@@ -151,13 +185,15 @@ static struct playdate_sys system_api = {.realloc=allocate, .logToConsole=log_me
     .getCurrentTimeMilliseconds=milliseconds, .getSecondsSinceEpoch=seconds, .setUpdateCallback=set_update,
     .getButtonState=buttons, .getCrankChange=crank_change, .isCrankDocked=crank_docked,
     .setCrankSoundsDisabled=crank_sounds, .addMenuItem=add_menu, .addCheckmarkMenuItem=add_check,
-    .getMenuItemValue=get_menu, .setMenuItemValue=set_menu, .removeAllMenuItems=remove_menus};
+    .getMenuItemValue=get_menu, .setMenuItemValue=set_menu, .removeAllMenuItems=remove_menus,
+    .setMenuImage=set_menu_image};
 static struct playdate_file file_api = {.geterr=file_error, .unlink=unlink_file,
     .listfiles=listfiles, .open=open_file, .close=close_file,
     .read=read_file, .write=write_file, .flush=flush_file, .rename=rename_file};
 static struct playdate_display display_api = {.setRefreshRate=refresh};
 static struct playdate_graphics graphics_api = {.clear=clear, .drawRect=rect, .fillRect=rect,
-    .drawText=draw_text, .getFrame=get_frame, .markUpdatedRows=dirty};
+    .drawText=draw_text, .getFrame=get_frame, .markUpdatedRows=dirty,
+    .newBitmap=new_bitmap, .freeBitmap=free_bitmap, .getBitmapData=bitmap_data};
 static struct playdate_sound sound_api = {.addSource=add_audio, .removeSource=remove_audio};
 static PlaydateAPI api = {.system=&system_api, .file=&file_api, .graphics=&graphics_api,
     .display=&display_api, .sound=&sound_api};
@@ -177,7 +213,7 @@ static void boot(void)
 static void shutdown(void)
 {
     eventHandler(&api, kEventTerminate, 0);
-    assert(allocations == 0 && !audio_callback && !num_menu);
+    assert(allocations == 0 && !audio_callback && !num_menu && !menu_image);
     for (unsigned i = 0; i < 3; ++i) assert(!files[i].opened);
 }
 static void options(void)
@@ -196,6 +232,82 @@ static Profile load_profile(void)
     assert(store.status == SAVE_READY || store.status == SAVE_RECOVERED); return store.profile;
 }
 static bool black(int x, int y) { return !(frame[y * 52 + x / 8] & (0x80u >> (x & 7))); }
+static void check_pause_image(const PortPausePanel *panel)
+{
+    assert(menu_image);
+    uint8_t expected[56 * 240]; memset(expected, 0xff, sizeof(expected));
+    Port_DrawPausePanel(expected, 56, panel);
+    assert(memcmp(menu_image->data, expected, sizeof(expected)) == 0);
+}
+static void test_pause_image(void)
+{
+    unsigned created = bitmap_creations;
+    boot();
+    uint8_t display_before[sizeof(frame)], game_before[320 * 200];
+    memcpy(display_before, frame, sizeof(frame));
+    eventHandler(&api, kEventPause, 0);
+    check_pause_image(&(PortPausePanel){.view = PORT_PAUSE_TITLE});
+    LCDBitmap *reused = menu_image;
+    assert(memcmp(display_before, frame, sizeof(frame)) == 0);
+    eventHandler(&api, kEventResume, 0); frame_at(0, 0); tap(kButtonA);
+
+    consoleplayer->ob_life = MAXFUEL / 2;
+    consoleplayer->ob_rounds = 123; consoleplayer->ob_bombs = 3;
+    consoleplayer->ob_crashcnt = 2; consoleplayer->ob_score.score = -245;
+    frame_at(kButtonB, 0); // pending bomb gesture; no world step
+    int ticks = countmove;
+    uint32_t world = hash_world(), seed = explseed;
+    uint8_t player_before[sizeof(*consoleplayer)];
+    memcpy(player_before, consoleplayer, sizeof(player_before));
+    memcpy(display_before, frame, sizeof(frame)); memcpy(game_before, vid_vram, sizeof(game_before));
+    PortPausePanel expected = {.view = PORT_PAUSE_FLIGHT,
+        .resources = {MAXFUEL / 2, 123, 3, maxcrash - 2, false}, .score = -245};
+    eventHandler(&api, kEventPause, 0); check_pause_image(&expected);
+    now += 30000; assert(update_callback(NULL) == 0);
+    assert(countmove == ticks && hash_world() == world && explseed == seed);
+    assert(memcmp(player_before, consoleplayer, sizeof(player_before)) == 0);
+    assert(memcmp(display_before, frame, sizeof(frame)) == 0);
+    assert(memcmp(game_before, vid_vram, sizeof(game_before)) == 0);
+    eventHandler(&api, kEventResume, 0); frame_at(0, 0);
+    assert(countmove == ticks);
+    frame_at(0, 100);
+    assert(countmove == ticks + 1 && !consoleplayer->ob_bombing);
+    assert(consoleplayer->ob_bombs >= 3); // the first tick can rearm at home
+    for (OBJECTS *ob = objtop; ob; ob = ob->ob_next)
+        assert(ob->ob_type != BOMB || ob->ob_owner != consoleplayer);
+    for (int i = 0; i < 5; ++i) {
+        eventHandler(&api, kEventPause, 0);
+        assert(menu_image == reused && bitmap_creations == created + 1 && num_menu == 3);
+        eventHandler(&api, kEventResume, 0); frame_at(0, 0);
+    }
+    settings();
+    eventHandler(&api, kEventPause, 0);
+    check_pause_image(&(PortPausePanel){.view = PORT_PAUSE_MENU, .menu_title = "SETTINGS"});
+    eventHandler(&api, kEventResume, 0); frame_at(0, 0); tap(kButtonB); tap(kButtonB);
+    // An injected result checks the panel mapping, not a played mission victory.
+    consoleplayer->ob_endsts = WINNER; restart_flag = true; frame_at(0, 0);
+    assert(showing("MISSION COMPLETE"));
+    eventHandler(&api, kEventPause, 0);
+    check_pause_image(&(PortPausePanel){.view = PORT_PAUSE_RESULTS, .score = -245, .won = true});
+    eventHandler(&api, kEventResume, 0); frame_at(0, 0); tap(kButtonB);
+    eventHandler(&api, kEventPause, 0);
+    check_pause_image(&(PortPausePanel){.view = PORT_PAUSE_TITLE});
+    shutdown();
+
+    boot(); tap(kButtonB); eventHandler(&api, kEventPause, 0);
+    check_pause_image(&(PortPausePanel){.view = PORT_PAUSE_FLIGHT,
+        .resources = {consoleplayer->ob_life, consoleplayer->ob_rounds,
+            consoleplayer->ob_bombs, maxcrash - consoleplayer->ob_crashcnt, true},
+        .score = consoleplayer->ob_score.score});
+    shutdown();
+
+    // Optional bitmap allocation failure must leave the game and system menu usable.
+    bitmap_failure = true; boot(); tap(kButtonB);
+    eventHandler(&api, kEventPause, 0); assert(!menu_image);
+    eventHandler(&api, kEventResume, 0); frame_at(0, 100);
+    assert(showing("SOPWITH  Practice"));
+    shutdown(); bitmap_failure = false;
+}
 static void test_flight_hud(void)
 {
     boot(); tap(kButtonA);
@@ -323,6 +435,6 @@ static void test_sdk_write_failures(void)
 }
 int main(void)
 {
-    test_flight_hud(); test_ui_and_persistence(); test_sdk_write_failures();
+    test_flight_hud(); test_pause_image(); test_ui_and_persistence(); test_sdk_write_failures();
     puts("PASS: app screens, settings/scores across relaunch, SDK file failures, pause/lock/audio and cleanup");
 }

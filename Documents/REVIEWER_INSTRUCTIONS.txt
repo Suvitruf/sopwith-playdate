@@ -1,10 +1,10 @@
 SOPWITH FOR PLAYDATE - REVIEWER INSTRUCTIONS
-Version: 0.4.1 (build 12)
+Version: 0.4.1 (build 13)
 Bundle ID: com.apanasik.sopwith
 
 GETTING STARTED
 
-The sopwith.pdx folder at the root of this ZIP is the native Playdate game. It was built with SDK 2.2.0, targeting Playdate OS 2.2.0. Version 0.4.1 build 12 updates the package and on-screen version while retaining build 11 gameplay, animated Home screen artwork and the margin HUD. Build 11 received device checks; build 12 has not been installed on hardware. Full gameplay acceptance remains pending. Review this bundle on a console; native Windows/macOS Simulator libraries are not included.
+The sopwith.pdx folder at the root of this ZIP is the native Playdate game. It was built with SDK 2.2.0, targeting Playdate OS 2.2.0. Version 0.4.1 build 13 adds a native pause panel with resource values and control reminders, retaining the original gameplay, animated Home screen artwork and margin HUD. Device captures verify the title, Dogfight, Practice and settings pause panels and a B-release/resume check. Full gameplay acceptance remains pending. Review this bundle on a console; native Windows/macOS Simulator libraries are not included.
 
 Select Sopwith on Home without launching it to see the plane loop above the buildings beside the game name. List view has a small animated plane icon.
 
@@ -24,7 +24,7 @@ FLIGHT CONTROLS
   Hold B, then tap Left:   Flip the plane once.
   Hold B, then tap Right:  Engage the automatic return-home/landing routine.
   Undocked crank: Optional throttle adjustment, 30 degrees per step.
-  Menu:           Pause and open the system menu.
+  Menu:           Pause and show the resource/control panel beside the system menu.
 
 Release B before starting another flip or return-home gesture. To flip back, release B, then hold B and tap Left again. Release a held Left/Right before starting a B chord. Releasing B after a completed chord does not drop a bomb. All essential controls work with the crank docked.
 
@@ -45,7 +45,7 @@ There is no level selector, level-skip shortcut, invulnerability toggle or revie
 
 MENUS AND SCORES
 
-Menu contains Restart, Sound and Options. Options pauses the mission. Up/Down selects menu items, A confirms, and B goes back. Release held flight controls after leaving a menu before pressing them again.
+Menu contains Restart, Sound and Options. Its pause panel shows the current score, fuel, lives and weapons during flight; Practice weapons are labeled UNLIMITED. Title/results and other menus have context-specific reminders. Options pauses the mission. Up/Down selects menu items, A confirms, and B goes back. Release held flight controls after leaving a menu before pressing them again.
 
 Options > Mission scores:
   Left / Right: Switch Dogfight / Practice.
@@ -60,7 +60,7 @@ Build 8 uses a new bundle ID and save directory. Settings and scores from earlie
 
 PACKAGE CONTENTS AND ATTRIBUTION
 
-  sopwith.pdx/           Native Playdate game (0.4.1, build 12), with launcher art and margin HUD.
+  sopwith.pdx/           Native Playdate game (0.4.1, build 13), with launcher art, margin HUD and native pause panel.
   README_REVIEW.txt      These instructions.
   COPYING.md            Upstream GPL license text.
   AUTHORS.txt           Upstream author credits.

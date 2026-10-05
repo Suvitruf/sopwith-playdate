@@ -4,9 +4,9 @@ The prototype has host sanitizer tests, an unmodified upstream reference compari
 
 ## Current verification status
 
-Current package: **0.4.1 build 12** (2026-10-06), a version-only update. Hardware observations below apply to the recorded earlier builds; build 12 has not been installed on the device.
+Current package: **0.4.1 build 13** (2026-10-06), adding a native pause panel. Build 13 is installed on the OS 2.2.0 device; older observations below remain scoped to their recorded builds.
 
-Build 12 passed all four host sanitizer entries and both SDK 2.2.0 native builds. The review ZIP passed its integrity check and all 108 manifest checksums; package metadata and the executable match the new device bundle. Gameplay source is unchanged from build 11.
+Build 13 passed all four ASan/UBSan/LeakSanitizer entries, both SDK 2.2.0 native builds and the 300-tick upstream object/terrain comparison. The original engine source is unchanged. Device captures verify title, Dogfight, Practice and settings pause layouts beside the real system menu. Releasing B while paused retained all five bombs after resuming flight. Relaunches loaded the existing profile generation 2 without a save; shutdown logs reported zero tracked engine allocations. The results pause layout is covered by host fixtures only. Physical LCD readability feedback, lock/unlock, full missions and heavy-scene profiling remain open.
 
 - Linux Simulator and ARM bundles compile with SDK 2.2.0. Native Windows and macOS Simulator builds have not been verified.
 - Linux Simulator checks covered title, flight, menus and settings reload with dummy audio; they do not verify audible sound.
@@ -42,6 +42,8 @@ The test wrapper runs three SDK-independent CTest entries (`port_tests`, `port_s
 `port_tests` checks short presses, held controls, B chords, pause clearing, opposing directions, crank thresholds/docking, clock wrap and catch-up bounds, framebuffer stride/margins/polarity, clipping and unchanged collision masks. Seeded engine runs at 17/33/100/250 ms callback intervals produce identical world state. Tests also cover repeated mission allocation stability, full shutdown cleanup, win/loss transitions and a novice takeoff/auto-return/refill with zero crashes.
 
 Margin-HUD fixtures cover full, low, empty and out-of-range resources; repeated redraws; Practice infinity symbols; and preservation of the central 320×200 image, top strip, row padding and buffer guards. The actual app fixture verifies live resource mapping and confirms that a display-only callback leaves world state, player bytes, random seed, tick count and indexed pixels unchanged. These checks do not establish physical-screen legibility or hardware frame-time cost.
+
+Build 13 adds pause-panel fixtures for title, both flight modes, results and other menus; extreme resource/score values; clipping, buffer guards and nonstandard bitmap stride; preserved row padding; and stale-image clearing. App tests verify live field mapping, unchanged world/player/random/frame state through a 30-second simulated pause, no catch-up burst or bomb from a pending B gesture on resume, one reused bitmap, cleanup, and allocation-failure fallback. Results are injected fixtures, not played mission victories.
 
 `port_stress` executes 12,000 seeded ticks across repeated missions and difficulty levels, mixing throttle, guns, bombs, flips, and return-home. It checks object-list integrity, bounded tracked heap usage and zero engine allocations after shutdown. This represents 20 minutes of simulation time, accelerated on the host; it is not a 20-minute hardware endurance or performance test.
 

@@ -3,5 +3,5 @@ author=Sopwith contributors
 description=Classic biplane combat. Playdate port prototype.
 bundleID=com.apanasik.sopwith
 version=0.4.1
-buildNumber=12
+buildNumber=13
 imagePath=launcher
