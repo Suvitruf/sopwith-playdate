@@ -23,11 +23,11 @@ Panic's online scoreboard service is available to Season/Catalog games. An SDK i
 | Dogfight | `dogfightalltime` | `dogfightdaily` |
 | Practice, if published online | `practicealltime` | `practicedaily` |
 
-Catalog submission, acceptance and contact with Panic are external user actions; this development pass does not submit anything or send messages.
+Catalog submission and board registration must be completed through Panic's developer portal before online integration can be tested.
 
 ## Integration plan once boards exist
 
-The SDK 2.2.0 headers already expose `PlaydateAPI.scoreboards`, so the C interface itself does not require upgrading this console's firmware. That does not establish the current server's compatibility with the older device; verify it on the registered game.
+The SDK 2.2.0 headers expose `PlaydateAPI.scoreboards`, so the C interface is available at the game's current SDK baseline. Server compatibility with OS 2.2.0 still needs verification on the registered game.
 
 Keep the profile lists usable offline. Route positive finished scores to the confirmed mode/period boards, preserving the current separate-mode policy. Fetch leaderboards only from a responsive menu state, with loading/error/cached-result labels; network calls may take ten seconds or more. Do not pause the physics callback waiting for a response. Limit concurrent work and follow SDK ownership by freeing callback score/list data with the corresponding scoreboard functions.
 
@@ -35,6 +35,6 @@ The service documents an outgoing cache for offline scores and cached reads. Do 
 
 ## Testing registered boards
 
-Register the Simulator to the developer's Playdate account. Simulator and physical-device leaderboards are separate test environments. Use USB deployment when testing on hardware: Panic warns wireless sideload changes the bundle ID, breaking the association with registered boards. Our existing USB workflow preserves it.
+Register the Simulator to the developer's Playdate account. Simulator and physical-device leaderboards are separate test environments. Use USB deployment when testing on hardware: Panic warns wireless sideload changes the bundle ID, breaking the association with registered boards. See [USB installation](SETUP.md#usb-installation-from-wsl) for the WSL procedure.
 
 Test submission, retrieval, personal best, offline cache, retry, app exit during an outstanding callback, GMT rollover, mode separation, and positive-value limits on the actual registered game. Follow [TESTING.md](TESTING.md) for local regression checks. No successful online call or global rank is claimed until this is done.

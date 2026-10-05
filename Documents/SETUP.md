@@ -4,7 +4,7 @@ The repository builds a playable prototype for Linux Simulator and ARM hardware.
 
 ## Build the game
 
-From the repository root:
+From the repository root on Ubuntu 24.04 x86_64 with Python 3.12, CMake, Make, and a host C compiler installed:
 
 ```bash
 python3 tools/bootstrap.py --local-toolchain --local-simulator-libs --device-compatibility-sdk
@@ -13,7 +13,9 @@ bash tools/test.sh
 bash tools/run-simulator.sh build/game-2.2.0/simulator/sopwith.pdx
 ```
 
-The game builder defaults to SDK 2.2.0 **only when `PLAYDATE_SDK_PATH` is unset**. Explicitly select it if your shell previously sourced `tools/env.sh`, which defaults to 3.1.2. SDK 3.1.2's Linux Simulator can load the native library built against 2.2.0. Keep game device packaging at 2.2.0 for the connected OS 2.2.0 console.
+The bootstrap creates `.tools/` and downloads the SDKs and selected dependencies there; build and test commands create `build/`. These directories are generated locally and are absent from a fresh checkout. See [Fresh Linux setup](#fresh-linux-setup) for system packages and Simulator runtime requirements.
+
+The game builder defaults to SDK 2.2.0 **only when `PLAYDATE_SDK_PATH` is unset**. Explicitly select it if your shell previously sourced `tools/env.sh`, which defaults to 3.1.2. SDK 3.1.2's Linux Simulator can load the native library built against 2.2.0. Use SDK 2.2.0 for bundles targeting Playdate OS 2.2.0.
 
 Outputs:
 
@@ -25,14 +27,7 @@ Outputs:
 
 The root CMake build uses the external SDK's `playdate.cmake` compiler/linker settings and stages all generated assets in the build directory. No native binary is written into tracked `Source/`. Launcher PNGs under `Source/launcher/` are copied into both staging directories and compiled by `pdc`; see [launcher artwork](LAUNCHER_ART.md) for regeneration. Linux/ARM are verified; native macOS/Windows remain untested.
 
-For the connected Windows-visible USB device, using the utility described below:
-
-```bash
-.tools/PlaydateSDK-3.1.2-Windows/bin/pdutil.exe install "$(wslpath -w "$PWD/build/game-2.2.0/device/sopwith.pdx")"
-.tools/PlaydateSDK-3.1.2-Windows/bin/pdutil.exe run /Games/sopwith.pdx
-```
-
-Wait for USB re-enumeration between commands. Installation replaces only the matching `sopwith.pdx` game. The separate SDK probe remains available for diagnostics.
+For hardware installation from WSL, see [USB installation from WSL](#usb-installation-from-wsl). The separate SDK probe remains available for diagnostics.
 
 ## Package a review ZIP
 
@@ -54,18 +49,9 @@ Build the game again before packaging if game code has changed since compilation
 
 The packager checks matching bundle/source version metadata, reviewer-note version, archive integrity and file contents. It does not submit the ZIP or establish Catalog approval or completion of the hardware acceptance matrix.
 
-## Prepared workspace
+## Shell environment
 
-This repository was prepared on Ubuntu 24.04 x86_64 under WSL2. Installed locally:
-
-| Component | Location |
-| --- | --- |
-| Playdate SDK 3.1.2, including `pdc`, Simulator, and API docs | `.tools/PlaydateSDK-3.1.2/` |
-| ARM GCC 13.2.1, Binutils, Newlib | `.tools/arm-toolchain/` |
-| Supplemental Simulator shared libraries | `.tools/simulator-libs/` |
-| Pinned upstream inspection copy | `.cache/research/sdl-sopwith-c4e034109e28a5bd1727645fe77b27430219e8b5/` |
-
-Run this in each Bash session:
+After running the bootstrap, run this in each Bash session to select the installed tools and build the SDK probe:
 
 ```bash
 source tools/env.sh
@@ -88,24 +74,24 @@ sudo apt-get install --no-install-recommends \
   build-essential cmake python3 ca-certificates \
   gcc-arm-none-eabi libnewlib-arm-none-eabi \
   libgtk-3-0t64 libasound2t64 libwebkit2gtk-4.1-0
-python3 tools/bootstrap.py --fetch-upstream
+python3 tools/bootstrap.py --device-compatibility-sdk
 source tools/env.sh
 bash tools/check-sdk.sh
 ```
 
-If system installation is unavailable and the host C tools are already present, the workflow used in this workspace is:
+If system installation is unavailable and the host C tools are already present, download the local toolchain and supplemental Simulator libraries:
 
 ```bash
-python3 tools/bootstrap.py --local-toolchain --local-simulator-libs --fetch-upstream
+python3 tools/bootstrap.py --local-toolchain --local-simulator-libs --device-compatibility-sdk
 source tools/env.sh
 bash tools/check-sdk.sh
 ```
 
-The local GUI package set supplements the libraries present on the researched host; it is **not** a complete Linux root filesystem. On a minimal fresh image, install normal GUI runtime dependencies with the package manager. `ldd` reports any remaining missing shared libraries. Package names differ outside Ubuntu; use the SDK's platform instructions.
+The local GUI package set supplements an existing Ubuntu desktop installation; it is **not** a complete Linux root filesystem. On a minimal fresh image, install normal GUI runtime dependencies with the package manager. `ldd` reports any remaining missing shared libraries. Package names differ outside Ubuntu; use the SDK's platform instructions.
 
 `tools/dependencies.json` pins URLs, versions, and SHA-256 hashes. The SDK and upstream hashes were calculated from the official downloads received during setup; they are reproducibility pins, not publisher signatures. Debian package hashes were checked against local APT repository metadata. The bootstrap downloads to a temporary file, verifies its hash, and extracts under ignored `.tools/`. Existing cached downloads are also verified.
 
-The SDK download is subject to the [Playdate SDK license](https://play.date/dev/sdk-license/). Its Linux `setup.sh` installs system desktop/MIME integration and USB udev rules using root privileges. That script was inspected but **not run** here because sudo needs a password. Direct compilation and executable launching use the local SDK without that integration. To add system integration on your own machine:
+The SDK download is subject to the [Playdate SDK license](https://play.date/dev/sdk-license/). Its Linux `setup.sh` installs system desktop/MIME integration and USB udev rules using root privileges. The bootstrap does not run it. Direct compilation and executable launching use the local SDK without that integration. To add system integration on your own machine:
 
 ```bash
 source tools/env.sh
@@ -136,17 +122,17 @@ Panic's helper writes native staging files into `Source/`; the script therefore 
 
 WSLg or another working Linux GUI session is needed for the Linux Simulator. A running process with no output does not prove the game opened. Audio/display sockets can be blocked inside an automation sandbox; run the wrapper in a regular WSL terminal to diagnose GUI behavior. Do not disable WebKit security features as a routine workaround.
 
-On this host, a desktop-access launch with `SDL_AUDIODRIVER=dummy GDK_BACKEND=x11 bash tools/run-simulator.sh` loaded and initialized the probe. That is a diagnostic mode with audio disabled, not a normal audio test. The later game Simulator checks verified title, flight, menus and real settings reload, using dummy audio. See [verification status](TESTING.md#current-verification-status) for completed checks; these Simulator observations are not audio listening tests.
+For display troubleshooting, `SDL_AUDIODRIVER=dummy GDK_BACKEND=x11 bash tools/run-simulator.sh` selects X11 and disables audio. This diagnostic mode cannot verify sound. See [verification status](TESTING.md#current-verification-status) for completed Simulator and hardware checks.
 
 Windows-native Simulator requires a Windows build (`pdex.dll`), not WSL's Linux `.so`. For native Windows, install the Windows SDK, Visual Studio C tools, CMake, and GNU Arm toolchain, and set `PLAYDATE_SDK_PATH`. On macOS, install its SDK package and Xcode command-line tools; follow the SDK's ARM toolchain setup. The project's Linux bootstrap/check wrappers have not been validated on those platforms.
 
 The probe CMake project supports the SDK's native platform branches. Copy `tools/sdk-smoke` into a disposable build workspace, then configure with `cmake -S <probe-copy> -B <host-build>`; configure a separate device directory using `-DCMAKE_TOOLCHAIN_FILE=<SDK>/C_API/buildsupport/arm.cmake`. See the official [C build documentation](https://sdk.play.date/3.1.2/Inside%20Playdate%20with%20C.html) for each host's compiler environment.
 
-Hardware sideloading requires a physical console. The SDK documents uploading from the Simulator's Device menu. This workspace can also reach a Windows-connected console using the Windows SDK's `pdutil.exe`, without WSL USB passthrough. See the tested procedure below.
+Hardware sideloading requires a physical console. The SDK documents uploading from the Simulator's Device menu. From WSL, the Windows SDK's `pdutil.exe` can also reach a Windows-connected console without WSL USB passthrough; see [USB installation from WSL](#usb-installation-from-wsl).
 
-## Connected device: OS 2.2.0
+## SDK probe for Playdate OS 2.2.0
 
-The connected device reports OS **2.2.0**. The current SDK 3.1.2 remains the default development baseline, but a separate **2.2.0 compatibility SDK** is installed for this device. Build and package against that older SDK rather than changing the generated bundle's version fields by hand:
+The SDK probe defaults to SDK 3.1.2. To build it for Playdate OS **2.2.0**, download and select the compatibility SDK. Use the matching SDK instead of editing the generated bundle's version fields:
 
 ```bash
 python3 tools/bootstrap.py --device-compatibility-sdk
@@ -155,17 +141,27 @@ PLAYDATE_SDK_PATH="$PWD/.tools/PlaydateSDK-2.2.0" bash tools/check-sdk.sh
 
 This creates `build/sdk-smoke-2.2.0/output/device/sdk_check_device.pdx`. The script also adapts the older SDK's package output layout. SDK 3.1.2 build products remain in `build/sdk-smoke/`. Compatibility builds have their own CMake caches.
 
-Windows detected the console as **COM3** during the recorded test. COM numbers can change. The official Windows SDK 3.1.2 archive is pinned in `tools/dependencies.json`; its `bin/pdutil.exe`, `VERSION.txt`, README, and license were extracted locally under `.tools/PlaydateSDK-3.1.2-Windows/` with 7-Zip. The system installer was not run. The bootstrap does not install Windows tools automatically; a normal Windows SDK installation also supplies this utility.
+## USB installation from WSL
 
-From this WSL workspace, with Windows interoperability available, the tested upload and launch commands are:
+Install the Windows Playdate SDK separately; the Linux bootstrap does not install `pdutil.exe`. With Windows interoperability enabled in WSL, set the utility path to your Windows SDK installation. Replace the example path below with its actual WSL path:
 
 ```bash
-.tools/PlaydateSDK-3.1.2-Windows/bin/pdutil.exe install \
-  "$(wslpath -w "$PWD/build/sdk-smoke-2.2.0/output/device/sdk_check_device.pdx")"
-.tools/PlaydateSDK-3.1.2-Windows/bin/pdutil.exe run /Games/sdk_check_device.pdx
+sopwith_pdutil="/mnt/c/path/to/PlaydateSDK/bin/pdutil.exe"
+"$sopwith_pdutil" install "$(wslpath -w "$PWD/build/game-2.2.0/device/sopwith.pdx")"
+"$sopwith_pdutil" run /Games/sopwith.pdx
 ```
 
-`install` temporarily switches the console to Data Disk mode, replaces the matching test bundle, and ejects the volume. Close other applications that hold its serial port first. Wait for the console to reappear before running the second command. This installs the SDK check, not a Sopwith game build.
+`install` temporarily switches the console to Data Disk mode, replaces the matching bundle, and ejects the volume. Close other applications that hold its serial port first. Wait for USB re-enumeration before running the second command.
+
+To install the compatible SDK probe instead, build it as described above and use the same utility:
+
+```bash
+"$sopwith_pdutil" install \
+  "$(wslpath -w "$PWD/build/sdk-smoke-2.2.0/output/device/sdk_check_device.pdx")"
+"$sopwith_pdutil" run /Games/sdk_check_device.pdx
+```
+
+Wait for the console to reappear between these commands as well. This installs the SDK check, not a Sopwith game build.
 
 Read live USB logs using the included helper. Replace `COM3` below with the Playdate port shown in Windows Device Manager under **Ports (COM & LPT)**:
 
@@ -181,11 +177,12 @@ Build 3 logs frame counts every five seconds, button transitions, crank sample c
 
 ## Upstream reference build
 
-The ignored pinned checkout remains unmodified for comparison with `Sources/core/`. On this Ubuntu workspace, the reference can be built directly with GCC and SDL2, without generating Autotools files:
+The optional desktop reference compares the port with the unmodified upstream engine. `--fetch-upstream` downloads the pinned source into `.cache/research/`, creating that directory locally; it is not included in the checkout or required to build the Playdate game. On Ubuntu 24.04, build the reference directly with GCC and SDL2:
 
 ```bash
 python3 tools/bootstrap.py --fetch-upstream --local-desktop-libs
 bash tools/build-reference.sh
+bash tools/test.sh
 python3 tools/check-reference.py
 ```
 

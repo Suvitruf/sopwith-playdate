@@ -7,15 +7,18 @@ The prototype has host sanitizer tests, an unmodified upstream reference compari
 As of version **0.4.0 build 9**:
 
 - Linux Simulator and ARM bundles compile with SDK 2.2.0. Native Windows and macOS Simulator builds have not been verified.
+- Linux Simulator checks covered title, flight, menus and settings reload with dummy audio; they do not verify audible sound.
 - The 0.4 score/save changes passed all four host sanitizer entries, including a 12,000-tick stress fixture and repeated-save fault injection. The independent comparison matched 300 seeded ticks against the unmodified desktop engine.
 - Initial hardware playtests confirmed title, flight, sound and repeated flips in the earlier 0.2 prototype. These observations do not complete the current full mission, loss/retry, landing or control acceptance matrix.
 - Build 8 with `com.apanasik.sopwith` passed a short device title-state startup check. Its separate data directory does not import earlier bundle IDs.
-- Build 9 is installed on the device and its launcher animation is user-confirmed. Both native packages contain the complete artwork and animation sequences; see [LAUNCHER_ART.md](LAUNCHER_ART.md).
+- Build 9's launcher animation was confirmed on a physical Playdate running OS 2.2.0. Both native packages contain the complete artwork and animation sequences; see [LAUNCHER_ART.md](LAUNCHER_ART.md).
 - Repeated saves/relaunch on hardware, Daily/All-time screen acceptance, interrupted writes, sustained combat performance and total device memory remain open. A remote CI run has not yet been observed.
 
 These observations are bounded checks. Record new results against the exact build and distinguish automated fixtures, Simulator checks and device tests.
 
 ## Checks available now
+
+Run these commands from the repository root after [development setup](SETUP.md#build-the-game) and [upstream reference setup](SETUP.md#upstream-reference-build). The SDK and reference source are downloaded by those steps; they are not included in the checkout. `bash tools/test.sh` can run the three SDK-independent entries without either download.
 
 ```bash
 bash tools/test.sh
@@ -45,7 +48,7 @@ AddressSanitizer, UndefinedBehaviorSanitizer and LeakSanitizer are enabled by th
 
 The SDK check builds an original C program as a Linux shared library and as an ARM bundle. It checks that `pdex.so` and `pdex.bin` are nonempty. It does not execute device instructions. Launch the probe with `bash tools/run-simulator.sh`; verify its text screen and A-button inversion separately. See [SETUP.md](SETUP.md) for the SDK and host requirements.
 
-The connected OS 2.2.0 device uses the separate compatibility build and Windows USB upload steps in [SETUP.md](SETUP.md). Probe build 3 emits `SDKCHECK` frame, input, crank, and lifecycle logs. Record hardware observations with the game version, platform and test conditions. The probe's frame rate does not establish game performance.
+For a Playdate running OS 2.2.0, use the [compatible SDK probe](SETUP.md#sdk-probe-for-playdate-os-220) and [USB installation instructions](SETUP.md#usb-installation-from-wsl). Probe build 3 emits `SDKCHECK` frame, input, crank, and lifecycle logs. Record hardware observations with the game version, platform and test conditions. The probe's frame rate does not establish game performance.
 
 ## Continuous integration
 

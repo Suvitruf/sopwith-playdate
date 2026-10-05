@@ -30,7 +30,7 @@ PLAYDATE_SDK_PATH="$PWD/.tools/PlaydateSDK-2.2.0" bash tools/build-game.sh
 
 Use `--output <directory>` for an alternate render destination. `--check` compares every expected PNG and animation sequence without writing files; CI runs it to detect stale generated artwork. Normal builds use the checked-in images and do not require an image library or asset-generation step. Change the renderer and regenerate when adjusting the layout or animation.
 
-Verification for build 9: both SDK 2.2.0 Simulator and ARM bundles contain all 101 compiled artwork/sequence files. PNG dimensions, monochrome mode, contiguous frame numbering and the stationary title were checked; a pose sheet was visually inspected. The official USB utility installed the build, and the user confirmed "Yes, the animation works" when asked to select Sopwith on Home. Separate card/list-view timing and long-duration checks were not recorded.
+Verification for build 9: both SDK 2.2.0 Simulator and ARM bundles contain all 101 compiled artwork/sequence files. PNG dimensions, monochrome mode, contiguous frame numbering and the stationary title were checked; a pose sheet was visually inspected. Launcher animation was confirmed on a physical Playdate after USB installation. Separate card/list-view timing and long-duration checks were not recorded.
 
 ## Source and attribution
 

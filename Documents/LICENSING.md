@@ -28,4 +28,4 @@ Do not put Panic's trademarks in the final application name without the permissi
 - Keep the SDK itself external. Check any separately bundled font, art, map, or audio licenses.
 - Verify credits, product name, and release metadata. Review any additional distribution-channel terms separately.
 
-These questions are a gate in the roadmap’s [release preparation](ROADMAP.md#4-prepare-the-release). Local research and port implementation can continue while the distribution approach is investigated. No public release or maintainer contact is part of the preparation task.
+These questions are a gate in the roadmap’s [release preparation](ROADMAP.md#4-prepare-the-release).
