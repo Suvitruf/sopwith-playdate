@@ -1,6 +1,6 @@
 # Sopwith port roadmap
 
-Current version: **0.4.0 build 9**, bundle ID `com.apanasik.sopwith`. The native game and animated launcher artwork are implemented. Launcher animation is confirmed on a physical Playdate; full gameplay, persistence and performance acceptance remain open. See [TESTING.md](TESTING.md) for current verification and the acceptance matrix.
+Current version: **0.4.1 build 12**, bundle ID `com.apanasik.sopwith`. Build 12 updates version metadata without changing build 11 gameplay. The native game, animated launcher artwork and margin resource HUD are implemented. Physical-device checks confirm launcher playback, Practice HUD readability, menu pause/resume, loss/retry and twelve repeated saves/reloads in a separate test profile. Full mission, positive-score persistence and worst-case performance acceptance remain open. See [TESTING.md](TESTING.md) for current verification and the acceptance matrix.
 
 ## Target experience
 
@@ -17,12 +17,13 @@ The first release focuses on built-in offline missions. Network multiplayer, cus
 - [x] Implement title/results/options screens, controls, credits, volume and presentation settings, plus local Daily/All-time scores for both modes.
 - [x] Implement versioned two-slot profiles and the repeated-save workaround for older firmware, with fault-injection tests.
 - [x] Add animated launcher card/icon artwork and a loading image, with reproducible [artwork generation](LAUNCHER_ART.md).
+- [x] Add fuel, remaining-aircraft and weapon readouts in the screen margins, preserving the original game view and simulation. Build 11 uses a single lives number; Practice retains unlimited weapons.
 
 These features are implemented; their remaining hardware checks are listed below. Build success alone does not complete gameplay acceptance.
 
 ## 1. Complete gameplay and controls acceptance
 
-- [ ] Complete takeoff, dogfight, bombing, crash/respawn, mission victory, advancing to another mission, final loss and restart on hardware.
+- [ ] Complete takeoff, dogfight, bombing, crash/respawn, mission victory, advancing to another mission, final loss and restart on hardware. Build 10 verified crash/respawn and loss/retry; the full mission matrix remains open.
 - [ ] Verify approach, landing, return-home, refuelling and rearming.
 - [ ] Exercise simultaneous pitch/fire, repeated B chords and bomb releases with the crank docked and undocked; check for unintended throttle or bombs.
 - [ ] Verify Menu, lock/unlock, pause/resume and restart without input replay, simulation catch-up or stuck sound.
@@ -32,8 +33,8 @@ Use the [controls contract](CONTROLS_AND_DISPLAY.md) and [manual test matrix](TE
 
 ## 2. Verify persistence, menus and sound
 
-- [ ] Exercise at least ten successive saves and a relaunch on hardware to verify the repeated-save fix retained from build 7.
-- [ ] Confirm settings and positive completed-mission scores survive relaunch; check Daily/All-time navigation and GMT rollover.
+- [x] Exercise at least ten successive saves and a relaunch on hardware to verify the repeated-save fix retained from build 7. Build 10 passed twelve generations and multiple reloads on OS 2.2.0 with the identical executable under a separate test bundle ID.
+- [ ] Confirm settings and positive completed-mission scores survive relaunch; check Daily/All-time navigation and GMT rollover. Changed sound settings and score-view navigation passed in build 10; positive scores and rollover remain unverified on device.
 - [ ] Check profile migration, corruption recovery and interrupted writes on actual storage. Build 8 introduced a separate data directory; earlier bundle IDs are not imported automatically.
 - [ ] Verify every menu and setting, including inverted pitch, crank disable, faction markers, mute and volume.
 - [ ] Listen to engine, weapon, explosion and music cues during play and lifecycle transitions.

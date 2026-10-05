@@ -10,14 +10,14 @@ set(CORE_FILES swauto swcollsn swend swgames swgrpha swinit swmain swmove
 foreach(name IN LISTS CORE_FILES)
     list(APPEND GAME_SOURCES Sources/core/${name}.c)
 endforeach()
-list(APPEND GAME_SOURCES Sources/port/engine.c Sources/port/runtime.c Sources/port/markers.c
+list(APPEND GAME_SOURCES Sources/port/engine.c Sources/port/runtime.c Sources/port/markers.c Sources/port/hud.c
     Sources/port/profile.c Sources/port/tone.c)
 include_directories(Sources/port Sources/core)
 add_compile_definitions(SOPWITH_PORT=1)
 
 if(SOPWITH_TESTS)
     enable_testing()
-    add_executable(port_tests tests/test_port.c ${GAME_SOURCES})
+    add_executable(port_tests tests/test_port.c tests/test_hud.c ${GAME_SOURCES})
     target_compile_options(port_tests PRIVATE -Wall -Wextra -Wno-sign-compare -UNDEBUG)
     if(SOPWITH_SANITIZERS)
         target_compile_options(port_tests PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)

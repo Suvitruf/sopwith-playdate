@@ -1,6 +1,6 @@
 # Contributing
 
-This project implements a native C port of SDL Sopwith to Playdate. Start with the [setup guide](SETUP.md), [roadmap](ROADMAP.md), and [architecture](ARCHITECTURE.md). The 0.4 implementation is covered by local regression tests; hardware gameplay, save/reload, readability, and performance acceptance are the next focus.
+This project implements a native C port of SDL Sopwith to Playdate. Start with the [setup guide](SETUP.md), [roadmap](ROADMAP.md), and [architecture](ARCHITECTURE.md). The 0.4 implementation is covered by local regression tests and focused device checks. Full missions, positive-score persistence, crowded-scene readability and worst-case performance remain priorities; see the [verification summary](TESTING.md#current-verification-status).
 
 ## Scope of a change
 

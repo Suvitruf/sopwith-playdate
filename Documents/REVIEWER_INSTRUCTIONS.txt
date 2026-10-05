@@ -1,10 +1,10 @@
 SOPWITH FOR PLAYDATE - REVIEWER INSTRUCTIONS
-Version: 0.4.0 (build 9)
+Version: 0.4.1 (build 12)
 Bundle ID: com.apanasik.sopwith
 
 GETTING STARTED
 
-The sopwith.pdx folder at the root of this ZIP is the native Playdate game. It was built with SDK 2.2.0, targeting Playdate OS 2.2.0. Build 9 adds animated Home screen artwork and has been installed on a console for visual review. Full gameplay acceptance remains pending. Review this bundle on a console; native Windows/macOS Simulator libraries are not included.
+The sopwith.pdx folder at the root of this ZIP is the native Playdate game. It was built with SDK 2.2.0, targeting Playdate OS 2.2.0. Version 0.4.1 build 12 updates the package and on-screen version while retaining build 11 gameplay, animated Home screen artwork and the margin HUD. Build 11 received device checks; build 12 has not been installed on hardware. Full gameplay acceptance remains pending. Review this bundle on a console; native Windows/macOS Simulator libraries are not included.
 
 Select Sopwith on Home without launching it to see the plane loop above the buildings beside the game name. List view has a small animated plane icon.
 
@@ -29,6 +29,8 @@ FLIGHT CONTROLS
 Release B before starting another flip or return-home gesture. To flip back, release B, then hold B and tap Left again. Release a held Left/Right before starting a B chord. Releasing B after a completed chord does not drop a bomb. All essential controls work with the crank docked.
 
 The player has a small V marker; friends have an open square; enemies an X. Settings can disable faction markers, invert pitch, disable crank throttle, mute sound, or change volume. B or Back leaves Settings and saves changes.
+
+Fuel appears in the left margin, with a steady LOW label at 20% or less. LIVES on the right is a single large count including the current aircraft. Larger AMMO and BOMBS values appear below the original HUD; infinity symbols indicate unlimited weapons in Practice. The original game view, physics and scoring remain unchanged.
 
 OBJECTIVE AND PROGRESSION
 
@@ -58,7 +60,7 @@ Build 8 uses a new bundle ID and save directory. Settings and scores from earlie
 
 PACKAGE CONTENTS AND ATTRIBUTION
 
-  sopwith.pdx/           Native Playdate game (0.4.0, build 9), with launcher art.
+  sopwith.pdx/           Native Playdate game (0.4.1, build 12), with launcher art and margin HUD.
   README_REVIEW.txt      These instructions.
   COPYING.md            Upstream GPL license text.
   AUTHORS.txt           Upstream author credits.

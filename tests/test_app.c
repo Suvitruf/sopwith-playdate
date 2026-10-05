@@ -3,8 +3,11 @@
 #include "pd_api.h"
 #include "profile.h"
 #include "swmain.h"
+#include "swinit.h"
 #include "swend.h"
 #include "pcsound.h"
+#include "video.h"
+#include "world_trace.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -192,6 +195,43 @@ static Profile load_profile(void)
     SaveIO io = Playdate_SaveIO(&api); ProfileStore store; Profile_Load(&store, &io);
     assert(store.status == SAVE_READY || store.status == SAVE_RECOVERED); return store.profile;
 }
+static bool black(int x, int y) { return !(frame[y * 52 + x / 8] & (0x80u >> (x & 7))); }
+static void test_flight_hud(void)
+{
+    boot(); tap(kButtonA);
+    assert(playmode == PLAYMODE_COMPUTER);
+    assert(black(15, 104) && black(372, 76)); // full fuel and five aircraft
+    uint8_t game[320 * 200], display[52 * 240];
+    memcpy(game, vid_vram, sizeof(game));
+    memcpy(display, frame, sizeof(display));
+    consoleplayer->ob_life = 0;
+    consoleplayer->ob_rounds = 0;
+    consoleplayer->ob_bombs = 0;
+    consoleplayer->ob_crashcnt = 4;
+    uint8_t player_before[sizeof(*consoleplayer)];
+    memcpy(player_before, consoleplayer, sizeof(player_before));
+    uint32_t world_before = hash_world(), seed_before = explseed;
+    int ticks_before = countmove;
+    frame_at(0, 0); // draw the changed resource fixture without a simulation tick
+    assert(countmove == ticks_before && hash_world() == world_before && explseed == seed_before);
+    assert(memcmp(player_before, consoleplayer, sizeof(player_before)) == 0);
+    assert(memcmp(game, vid_vram, sizeof(game)) == 0);
+    for (int y = 20; y < 220; ++y)
+        assert(memcmp(frame + y * 52 + 5, display + y * 52 + 5, 40) == 0);
+    assert(!black(15, 104) && !black(15, 178));
+    assert(!black(372, 76) && black(380, 78)); // one aircraft remains
+    assert(memcmp(frame + 222 * 52, display + 222 * 52, 16 * 52) != 0);
+    shutdown();
+
+    boot(); tap(kButtonB);
+    assert(playmode == PLAYMODE_NOVICE);
+    memcpy(display, frame, sizeof(display));
+    consoleplayer->ob_rounds = 0;
+    consoleplayer->ob_bombs = 0;
+    frame_at(0, 0);
+    assert(memcmp(frame + 222 * 52, display + 222 * 52, 16 * 52) == 0);
+    shutdown();
+}
 static void test_ui_and_persistence(void)
 {
     boot(); settings();
@@ -283,6 +323,6 @@ static void test_sdk_write_failures(void)
 }
 int main(void)
 {
-    test_ui_and_persistence(); test_sdk_write_failures();
+    test_flight_hud(); test_ui_and_persistence(); test_sdk_write_failures();
     puts("PASS: app screens, settings/scores across relaunch, SDK file failures, pause/lock/audio and cleanup");
 }

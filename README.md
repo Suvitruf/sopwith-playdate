@@ -4,9 +4,9 @@
 
 A native C port of [SDL Sopwith](https://github.com/fragglet/sdl-sopwith): take off, dogfight, bomb targets, and land on Playdate's monochrome screen.
 
-**Status:** prototype **0.4.0 (build 9)** adds an animated Home screen card and list icon. It includes local **Daily** and **All-time** mission scores and a fix for repeated saves on older device firmware. The bundle ID remains `com.apanasik.sopwith`, as in build 8. Settings and scores from builds before 8 are not automatically imported. Dogfight and Practice stay separate. Online Catalog scoreboards require registered boards and are not connected yet.
+**Status:** prototype **0.4.1 (build 12)** adds larger fuel, remaining-aircraft, ammunition and bomb readouts around the original game view. Lives use a single large number; Practice shows infinity symbols for unlimited weapons. It includes animated Home screen artwork, local **Daily** and **All-time** mission scores, and the repeated-save fix for older device firmware. The bundle ID remains `com.apanasik.sopwith`, as in build 8. Settings and scores from builds before 8 are not automatically imported. Dogfight and Practice stay separate. Online Catalog scoreboards require registered boards and are not connected yet.
 
-Build 9's launcher animation has been confirmed on a physical Playdate. Build 8 passed a brief title-state console check; full mission, storage-fix and performance acceptance on hardware remain open. See [launcher artwork](Documents/LAUNCHER_ART.md), [verification status](Documents/TESTING.md#current-verification-status), and [scoreboard registration](Documents/SCOREBOARDS.md).
+Version 0.4.1 build 12 is a local package update with no gameplay changes. Build 11 remains installed and its simplified HUD has been checked on a physical Playdate running OS 2.2.0. Practice HUD readability is confirmed. Build 10 device checks covered twelve successive saves and reloads in a separate test profile, menu pause/resume and a loss/retry cycle. Full mission, positive-score persistence and worst-case performance acceptance remain open. See [controls and display](Documents/CONTROLS_AND_DISPLAY.md), [verification status](Documents/TESTING.md#current-verification-status), and [scoreboard registration](Documents/SCOREBOARDS.md).
 
 ## Start here
 

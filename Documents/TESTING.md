@@ -4,15 +4,20 @@ The prototype has host sanitizer tests, an unmodified upstream reference compari
 
 ## Current verification status
 
-As of version **0.4.0 build 9**:
+Current package: **0.4.1 build 12** (2026-10-06), a version-only update. Hardware observations below apply to the recorded earlier builds; build 12 has not been installed on the device.
+
+Build 12 passed all four host sanitizer entries and both SDK 2.2.0 native builds. The review ZIP passed its integrity check and all 108 manifest checksums; package metadata and the executable match the new device bundle. Gameplay source is unchanged from build 11.
 
 - Linux Simulator and ARM bundles compile with SDK 2.2.0. Native Windows and macOS Simulator builds have not been verified.
 - Linux Simulator checks covered title, flight, menus and settings reload with dummy audio; they do not verify audible sound.
-- The 0.4 score/save changes passed all four host sanitizer entries, including a 12,000-tick stress fixture and repeated-save fault injection. The independent comparison matched 300 seeded ticks against the unmodified desktop engine.
-- Initial hardware playtests confirmed title, flight, sound and repeated flips in the earlier 0.2 prototype. These observations do not complete the current full mission, loss/retry, landing or control acceptance matrix.
+- Build 11 passed all four host sanitizer entries, including a 12,000-tick stress fixture, HUD bounds/read-only checks and repeated-save fault injection. The build 10 comparison matched 300 seeded ticks against the unmodified desktop engine; build 11 only removes duplicate lives indicators and changes version metadata.
+- Initial hardware playtests confirmed title, flight, sound and repeated flips in the earlier 0.2 prototype. Build 10 also verified a loss/retry cycle and menu pause/resume. Mission victory, successful landing/refill, lock/unlock and the full control/listening matrix remain open.
 - Build 8 with `com.apanasik.sopwith` passed a short device title-state startup check. Its separate data directory does not import earlier bundle IDs.
 - Build 9's launcher animation was confirmed on a physical Playdate running OS 2.2.0. Both native packages contain the complete artwork and animation sequences; see [LAUNCHER_ART.md](LAUNCHER_ART.md).
-- Repeated saves/relaunch on hardware, Daily/All-time screen acceptance, interrupted writes, sustained combat performance and total device memory remain open. A remote CI run has not yet been observed.
+- Build 10 completed twelve successive saves and multiple relaunches in an isolated device profile using the identical executable with a separate bundle ID. The final two device records passed CRC/generation checks; a changed sound setting survived relaunch. Settings, Controls, Credits and all four Dogfight/Practice × Daily/All-time views were navigated. The score lists were empty, so this does not verify positive-score persistence or midnight rollover.
+- Eleven selected build 10 flight telemetry intervals totaled 55,166 ms, 1,671 callbacks and 550 simulation ticks: 30.29 callbacks/s and 9.97 ticks/s. Maximum measured callback duration was 15 ms, and the largest reported tracked engine payload peak was 204,100 bytes. These measurements cover the exercised scenes, not worst-case effects, total CPU use, SDK allocations or stack.
+- Physical-device captures show resource counts changing in Dogfight and infinity symbols in Practice. Fuel, weapon and lives readability in Practice was confirmed. Build 11 removes the duplicate lives bars; two device captures verify the single-number layout, and startup/relaunch retained the existing profile without an additional save.
+- Positive-score persistence, profile migration, interrupted writes, sustained heavy-combat performance and total device memory remain open. A remote CI run has not yet been observed.
 
 These observations are bounded checks. Record new results against the exact build and distinguish automated fixtures, Simulator checks and device tests.
 
@@ -35,6 +40,8 @@ git diff --cached --check
 The test wrapper runs three SDK-independent CTest entries (`port_tests`, `port_stress`, `profile_tests`) and, when SDK headers are installed, `app_tests`. Without headers, CMake explicitly reports that the application suite was skipped. This is not a four-suite pass. Set `PLAYDATE_SDK_PATH` or install the pinned compatibility SDK to include it.
 
 `port_tests` checks short presses, held controls, B chords, pause clearing, opposing directions, crank thresholds/docking, clock wrap and catch-up bounds, framebuffer stride/margins/polarity, clipping and unchanged collision masks. Seeded engine runs at 17/33/100/250 ms callback intervals produce identical world state. Tests also cover repeated mission allocation stability, full shutdown cleanup, win/loss transitions and a novice takeoff/auto-return/refill with zero crashes.
+
+Margin-HUD fixtures cover full, low, empty and out-of-range resources; repeated redraws; Practice infinity symbols; and preservation of the central 320×200 image, top strip, row padding and buffer guards. The actual app fixture verifies live resource mapping and confirms that a display-only callback leaves world state, player bytes, random seed, tick count and indexed pixels unchanged. These checks do not establish physical-screen legibility or hardware frame-time cost.
 
 `port_stress` executes 12,000 seeded ticks across repeated missions and difficulty levels, mixing throttle, guns, bombs, flips, and return-home. It checks object-list integrity, bounded tracked heap usage and zero engine allocations after shutdown. This represents 20 minutes of simulation time, accelerated on the host; it is not a 20-minute hardware endurance or performance test.
 

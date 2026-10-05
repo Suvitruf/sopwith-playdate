@@ -6,6 +6,7 @@
 #include "profile.h"
 #include "storage.h"
 #include "tone.h"
+#include "hud.h"
 #include "swmain.h"
 #include "swsound.h"
 #include "pcsound.h"
@@ -177,6 +178,10 @@ static void draw_screen(void)
         size_t count;
         const PortMarker *markers = Engine_Markers(&count);
         Port_DrawMarkers(frame, markers, count, store.profile.markers);
+        const PortHUD hud = {consoleplayer->ob_life, consoleplayer->ob_rounds,
+            consoleplayer->ob_bombs, maxcrash - consoleplayer->ob_crashcnt,
+            selected_mode == PLAYMODE_NOVICE};
+        Port_DrawHUD(frame, &hud);
         pd->graphics->markUpdatedRows(0, 239);
         text_at(selected_mode == PLAYMODE_NOVICE ? "SOPWITH  Practice" : "SOPWITH  Dogfight", 40, 0);
         text_at("Throttle", 245, 0);
@@ -194,7 +199,7 @@ static void draw_screen(void)
         text_at("A  Dogfight", 120, 99);
         text_at("B  Practice (novice flight)", 72, 128);
         text_at("Down / Menu: Options", 94, 169);
-        text_at("Sopwith 0.4.0", 139, 192);
+        text_at("Sopwith 0.4.1", 139, 192);
     } else if (screen == OPTIONS) {
         text_at("OPTIONS", 152, 5);
         const char *items[] = {return_screen == FLIGHT ? "Resume flight" : "Back",
@@ -424,7 +429,7 @@ int eventHandler(PlaydateAPI *api, PDSystemEvent event, uint32_t arg)
         pd->system->addMenuItem("Options", menu_options, NULL);
         reset_input_clock();
         pd->system->setUpdateCallback(update, NULL);
-        pd->system->logToConsole("SOPWITH 0.4.0 build 9 initialized; save_status=%d generation=%lu", store.status, (unsigned long)store.generation);
+        pd->system->logToConsole("SOPWITH 0.4.1 build 12 initialized; save_status=%d generation=%lu", store.status, (unsigned long)store.generation);
     } else if (event == kEventPause || event == kEventLock) {
         suspended = true;
         reset_input_clock();

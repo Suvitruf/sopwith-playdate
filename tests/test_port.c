@@ -40,6 +40,7 @@ void Speaker_Init(void) {}
 void Speaker_Off(void) {}
 void Speaker_Output(unsigned short count) { (void)count; }
 bool snd_tinnyfilter;
+void test_hud(void);
 
 static void test_clock(void)
 {
@@ -304,12 +305,13 @@ int main(int argc, char **argv)
     test_clock();
     test_input();
     test_pixels();
+    test_hud();
     assert(trace(33, false) == trace(17, false));
     assert(trace(100, false) == trace(250, false));
     test_lifetime_and_results();
     test_landing();
     Engine_Shutdown();
     assert(live_bytes == 0 && live_allocations == 0);
-    puts("PASS: timing, input, pixels, clipping, collision, deterministic flight, restart lifetime and results");
+    puts("PASS: timing, input, pixels, margin HUD, clipping, collision, deterministic flight, restart lifetime and results");
     return 0;
 }

@@ -1,6 +1,6 @@
 # Controls and monochrome display
 
-Status: **0.4 controls/settings implemented; earlier device flight, sound and repeated flip confirmed**. Broader combat, chord interaction, and new settings/readability playtesting on device are still pending. The original command semantics come from pinned upstream `video.c`, `video.h`, `sw.h`, and `swmove.c`; see the [upstream import ledger](../Sources/core/PORTING.md).
+Status: **0.4 controls/settings implemented; earlier device flight, sound and repeated flip confirmed**. Practice HUD readability is confirmed, and the lives display uses a single large number. Broader combat, chord interaction, settings and crowded-scene readability checks remain pending. The original command semantics come from pinned upstream `video.c`, `video.h`, `sw.h`, and `swmove.c`; see the [upstream import ledger](../Sources/core/PORTING.md).
 
 ## Input goals
 
@@ -51,7 +51,11 @@ Return to title asks for confirmation when leaving a running mission. An unfinis
 
 ## Current display implementation
 
-Preserve the full 320×200 frame at (40,20) on the 400×240 display. This leaves 40-pixel side margins and 20-pixel top/bottom margins. Keep the original HUD inside that frame first; use margins only for optional help/indicators that do not obscure gameplay. Pixel aspect/readability must be compared to the desktop reference.
+The full 320×200 frame remains at (40,20) on the 400×240 display, including its original HUD and minimap. Build 10 adds duplicate resource readouts in the 40-pixel side margins and 20-pixel bottom margin. Mode and throttle remain in the top strip. No camera, sprite, collision or world-coordinate changes are involved.
+
+The left margin shows fuel as a percentage and a larger vertical gauge. Positive fuel rounds up to the next percentage point, so it never reads 0% while fuel remains. A steady `LOW` label appears at 20% or less; `OUT` appears at zero. Fuel is not a time estimate. The right margin shows `LIVES` and one large count, matching the original remaining-aircraft counter including the current aircraft. Build 11 removes the duplicate filled/empty indicators after device feedback. The counter changes when the engine accounts for a crash, preserving the original timing.
+
+The bottom strip shows `AMMO` and `BOMBS` with numbers twice the original font size. Practice shows the original font's infinity symbol for both unlimited weapons; fuel and aircraft remain finite. The margin HUD is always shown during flight, uses the existing upstream font, and adds no setting or save-format change. Rendering reads the current resource values without advancing the engine or changing them. Automated checks cover clipping, bounds and read-only behavior. Build 10 hardware captures confirm both weapon-display modes, decreasing resources and updated aircraft counts after crashes. Selected device flight intervals measure approximately 30 callbacks/s and 10 ticks/s with a maximum callback of 15 ms; device feedback subsequently confirmed that fuel, weapons and lives are readable in Practice. Crowded-scene readability and worst-case performance remain pending. See [verification status](TESTING.md#current-verification-status).
 
 The prototype uses white sky, black silhouettes and interior index-2 dithering. Thin edges and isolated pixels stay solid. Visible living aircraft, standing targets and flying balloons receive presentation-only 5×5 markers with a white surround: **V = player, open square = friendly, X = enemy**. The frame snapshot occurs before collisions, avoiding stale object pointers or markers drifting from the completed frame. Faction markers can be disabled; the player marker remains. Markers are clipped to the viewport and limited to 100 per frame. They do not alter the minimap.
 
